@@ -1,0 +1,11 @@
+description "JBoss Server"
+start on started networking
+
+stop on stopped networking
+
+respawn
+respawn limit 99 5
+
+script
+  sudo -u <%=node['jboss']['jboss_user']%> <%=node['jboss']['jboss_home']%>/bin/standalone.sh
+end script

@@ -1,0 +1,38 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "opscode-ubuntu-12.04"
+  config.vm.box_url = "https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04_provisionerless.box"
+
+  config.vm.network :forwarded_port, guest: 9990, host: 9990
+  config.vm.network :forwarded_port, guest: 9999, host: 9999
+
+  config.vm.provider :virtualbox do |vb|
+     # Don't boot with headless mode
+     vb.customize ["modifyvm", :id, "--memory", "2048"]
+  end
+
+  config.omnibus.enabled = true
+  config.omnibus.chef_version = :latest
+
+  config.vm.provision :chef_solo do |chef|
+    chef.add_recipe "apt"
+    chef.add_recipe "java"
+    chef.add_recipe "jboss-local"
+    chef.json = {
+      :apt => { :compiletime => true },
+      :jboss => { :bind => { :management => "0.0.0.0 " } },
+      :java => {
+        :oracle => {
+          "accept_oracle_download_terms" => true
+        },
+        "install_flavor" => "oracle",
+        "jdk_version" => "7"
+      }
+    }
+  end
+end

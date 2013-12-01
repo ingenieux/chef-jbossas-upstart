@@ -1,0 +1,3 @@
+cookbook 'apt'
+cookbook 'java', '~> 1.15.4'
+cookbook 'jboss-local', path: 'cookbooks/jboss-local'
